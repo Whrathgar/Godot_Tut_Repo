@@ -7,6 +7,7 @@ export (int) var x_start;
 export (int) var y_start;
 export (int) var offset;
 
+
 var possible_pieces = [
 	preload("res://scenes/YellowPiece.tscn"),
 	preload("res://scenes/GreenPiece.tscn"),
@@ -14,10 +15,14 @@ var possible_pieces = [
 	preload("res://scenes/PinkPiece.tscn"),
 	preload("res://scenes/BluePiece.tscn"),
 	preload("res://scenes/LightGreenPiece.tscn")
-	
-]
+];
 
+#the currect pieces on screen
 var all_pieces = [];
+
+#Touch variables
+var first_touch = Vector2(0,0);
+var final_touch = Vector2(0,0);
 
 func _ready():
 	randomize()
@@ -49,9 +54,22 @@ func grid_to_pixel(column,row):
 	return Vector2(new_x, new_y);
 	pass;
 
+func pixel_to_grid(pixel_x,pixel_y):
+	var new_x = round((pixel_x - x_start) / offset);
+	var new_y = round((pixel_y - y_start) / -offset);
+	return Vector2(new_x,new_y)
+	pass;
+
+func touch_input():
+	if Input.is_action_just_pressed("ui_touch"):
+		first_touch = get_global_mouse_position();
+		var grid_position = pixel_to_grid(first_touch.x,first_touch.y);
+		print(grid_position);
+	if Input.is_action_just_released("ui_touch"):
+		final_touch = get_global_mouse_position();
+		#var grid_position = pixel_to_grid(final_touch.x,final_touch.y)
 
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _process(delta):
+	touch_input()
